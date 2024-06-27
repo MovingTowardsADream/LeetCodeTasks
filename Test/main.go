@@ -1,56 +1,71 @@
 package main
 
-import (
-	"context"
-	"fmt"
-	"time"
-)
-
-func gen(ctx context.Context, nums ...int) <-chan int {
-	out := make(chan int)
-	go func() {
-		defer close(out)
-		for _, val := range nums {
-			select {
-			case out <- val:
-			case <-ctx.Done():
-				return
-			}
-		}
-	}()
-	return out
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
 }
 
-func sq(ctx context.Context, in <-chan int) <-chan int {
-	out := make(chan int)
-	go func() {
-		defer close(out)
-		for {
-			time.Sleep(170 * time.Millisecond)
-			select {
-			case <-ctx.Done():
-				return
-			case val, ok := <-in:
-				if !ok {
-					return
-				}
-				select {
-				case out <- val * val:
-				case <-ctx.Done():
-					return
-				}
-			}
+func maxDepth(root *TreeNode) int {
+	maximum := 0
+	var main func(node *TreeNode, sum int)
+	main = func(node *TreeNode, sum int) {
+		if node == nil {
+			maximum = max(maximum, sum)
+			return
 		}
-	}()
-	return out
-}
-
-func main() {
-	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
-	for val := range sq(ctx, gen(ctx, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) {
-		fmt.Println(val)
+		main(node.Left, sum+1)
+		main(node.Right, sum+1)
 	}
+	main(root, 0)
+	return maximum
 }
+
+//func gen(ctx context.Context, nums ...int) <-chan int {
+//	out := make(chan int)
+//	go func() {
+//		defer close(out)
+//		for _, val := range nums {
+//			select {
+//			case out <- val:
+//			case <-ctx.Done():
+//				return
+//			}
+//		}
+//	}()
+//	return out
+//}
+//
+//func sq(ctx context.Context, in <-chan int) <-chan int {
+//	out := make(chan int)
+//	go func() {
+//		defer close(out)
+//		for {
+//			time.Sleep(170 * time.Millisecond)
+//			select {
+//			case <-ctx.Done():
+//				return
+//			case val, ok := <-in:
+//				if !ok {
+//					return
+//				}
+//				select {
+//				case out <- val * val:
+//				case <-ctx.Done():
+//					return
+//				}
+//			}
+//		}
+//	}()
+//	return out
+//}
+//
+//func main() {
+//	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
+//	for val := range sq(ctx, gen(ctx, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) {
+//		fmt.Println(val)
+//	}
+//}
 
 //
 //type Node struct {
