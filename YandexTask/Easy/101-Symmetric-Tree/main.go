@@ -23,7 +23,7 @@ func symmetric(left, right *TreeNode) bool {
 }
 
 // or
-
+//
 //var result bool
 //
 //func isSymmetric(root *TreeNode) bool {
@@ -45,4 +45,28 @@ func symmetric(left, right *TreeNode) bool {
 //	}
 //	symmetric(left.Right, right.Left)
 //	symmetric(left.Left, right.Right)
+//}
+//
+// or
+//
+//func isSymmetric(root *TreeNode) bool {
+//	if root == nil { return true }
+//	res := true
+//
+//	var permSymmetric func(*TreeNode, *TreeNode)
+//	permSymmetric = func(left, right *TreeNode) {
+//		if left == nil && right == nil { return }
+//
+//		if !res || left == nil || right == nil || left.Val != right.Val {
+//			res = false
+//			return
+//		}
+//
+//		permSymmetric(left.Right, right.Left)
+//		permSymmetric(left.Left, right.Right)
+//	}
+//
+//	permSymmetric(root.Left, root.Right)
+//
+//	return res
 //}
